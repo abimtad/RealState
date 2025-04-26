@@ -1,4 +1,3 @@
-import { nextTick } from "process";
 import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 
