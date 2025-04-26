@@ -31,8 +31,11 @@ function SignUp() {
         setError(data.message);
         setLoading(false);
         console.log("something is wrong");
+        return;
       }
       navigate("/sign-in");
+      setLoading(false);
+      return;
     } catch (error) {
       setLoading(false);
       setError(error);

@@ -1,5 +1,14 @@
 # auth
+### Sign in a user
+POST http://localhost:3000/api/auth/signIn
+Content-Type: application/json
 
+{
+	"email": "tadesseabel26@gmail.com",
+	"password": "simple password"
+}
+
+### Sign up a user
 POST http://localhost:3000/api/auth/signUp
 Content-Type: application/json
 
