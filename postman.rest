@@ -1,4 +1,16 @@
 # auth
+
+### Login via google provider
+POST http://127.0.0.1:5173/api/auth/google
+Content-Type: application/json
+
+{
+	"name": "Abel Tadesse",
+	"email": "tadesseabel26@gmail.com",
+	"avatar": "https://lh3.googleusercontent.com/a/ACg8ocI_VhakO5zX48P672TJLC4wafu4bySvsc0rggeCHLmvVQaQfKvT=s96-c"
+}
+
+
 ### Sign in a user
 POST http://localhost:3000/api/auth/signIn
 Content-Type: application/json
