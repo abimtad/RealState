@@ -8,7 +8,7 @@ export const signUp = async (req, res, next) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
-      return res.status(400).json({ message: "Some fields are missing" });
+      return next(errorHandler(400, "Some fields are missing"));
     }
 
     const hashedPassword = bcryptjs.hashSync(password, 10);
@@ -25,6 +25,9 @@ export const signUp = async (req, res, next) => {
 export const signIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    if (!email || !password) {
+      return next(errorHandler(400, "Some fields are missing"));
+    }
     const validUser = await User.findOne({ email });
 
     if (!validUser) return next(errorHandler(400, "User not Found!"));
