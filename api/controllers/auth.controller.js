@@ -68,7 +68,7 @@ export const google = async (req, res, next) => {
         Math.random().toString(36).slice(-8) +
         Math.random().toString(36).slice(-8);
 
-      const hashedPassword = bcryptjs.compareSync(generatedPassword, 10);
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
 
       const username =
         name.split(" ").join("").toLowerCase() +
@@ -88,7 +88,7 @@ export const google = async (req, res, next) => {
         process.env.JWT_SECRET_KEY
       );
 
-      const { password: pass, ...withOutPassword } = user._doc;
+      const { password: pass, ...withOutPassword } = newUser._doc;
       return res
         .cookie("access_token", token, httpOnly)
         .status(201)
