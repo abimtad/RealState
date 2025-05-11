@@ -24,7 +24,7 @@ function Header() {
           </button>
         </form>
 
-        <ul className="flex gap-4">
+        <ul className="flex gap-4 items-center">
           <Link to="/">
             <li className="hidden sm:inline text-slate-700 hover:underline">
               Home
@@ -40,7 +40,7 @@ function Header() {
               <img
                 src={user.avatar}
                 alt="profile"
-                className="h-8 w-8 rounded-full object-cover"
+                className="h-12 w-12 rounded-full object-cover"
               />
             ) : (
               <span className="text-slate-700 hover:underline">Sign In</span>

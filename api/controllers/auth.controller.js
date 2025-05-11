@@ -84,7 +84,7 @@ export const google = async (req, res, next) => {
       await newUser.save();
 
       const token = await jwt.sign(
-        { id: user._id },
+        { id: newUser._id },
         process.env.JWT_SECRET_KEY
       );
 

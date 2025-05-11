@@ -9,7 +9,7 @@ import {
 import OAuth from "../components/OAuth";
 
 function SignUp() {
-  const [formData, setFromData] = useState();
+  const [formData, setFromData] = useState({});
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.user); // state is what combineReducers combined all the slice together You access slices by their keys (state.user, state.cart, etc.), which match the keys in combineReducers.
   const navigate = useNavigate();
