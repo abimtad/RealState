@@ -90,7 +90,7 @@ export const google = async (req, res, next) => {
 
       const { password: pass, ...withOutPassword } = newUser._doc;
       return res
-        .cookie("access_token", token, httpOnly)
+        .cookie("access_token", token, { httpOnly: true })
         .status(201)
         .json(withOutPassword);
     }

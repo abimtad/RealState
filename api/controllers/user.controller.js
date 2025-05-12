@@ -31,3 +31,19 @@ export const updateUser = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteUser = async (req, res, next) => {
+  if (req.user.id !== req.params.id) {
+    return next(errorHandler(403, "You can only delete your data"));
+  }
+
+  try {
+    await User.findByIdAndDelete(req.user.id);
+
+    res
+      .clearCookie("access_token")
+      .json({ message: "Deleted user successfully!" });
+  } catch (error) {
+    next(error);
+  }
+};
