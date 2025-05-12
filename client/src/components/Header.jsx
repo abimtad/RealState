@@ -1,7 +1,6 @@
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-
 function Header() {
   const user = useSelector((state) => state.user.currentUser);
   return (

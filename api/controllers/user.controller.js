@@ -4,7 +4,7 @@ import bcryptjs from "bcryptjs";
 
 export const updateUser = async (req, res, next) => {
   if (req.user.id !== req.params.id) {
-    return errorHandler(403, "You can only update your data");
+    return next(errorHandler(403, "You can only update your data"));
   }
 
   try {

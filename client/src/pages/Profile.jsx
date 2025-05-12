@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { app } from "../firebase";
 import {
   getDownloadURL,
@@ -7,6 +7,11 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
+import {
+  updateUserFailure,
+  updateUserStart,
+  updateUserSuccess,
+} from "../redux/user/userSlice";
 
 function Profile() {
   const inputRef = useRef();
@@ -14,7 +19,11 @@ function Profile() {
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
-  console.log(file);
+  const { currentUser, error, loading } = useSelector((state) => state.user);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const dispatch = useDispatch();
+
+  console.log(formData);
 
   useEffect(() => {
     if (file) {
@@ -52,12 +61,43 @@ function Profile() {
       }
     );
   };
-  const user = useSelector((state) => state.user.currentUser);
+
+  // QUESTIONS: why you didnt use the traditional function declaration over this?
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    dispatch(updateUserStart());
+    try {
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+    } catch (error) {
+      dispatch(updateUserFailure(error.message));
+    }
+  };
 
   return (
     <div className="max-w-lg  mx-auto mt-32">
       <h1 className="font-semibold text-3xl text-center mb-8">Profile</h1>
-      <form action="" className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <input
           ref={inputRef}
           type="file"
@@ -67,10 +107,12 @@ function Profile() {
         />
         <img
           className="w-24 h-24 self-center rounded-full  my-6 object-cover cursor-pointer"
-          src={formData.avatar || user.avatar}
+          src={formData.avatar || currentUser.avatar}
           alt="profile picture"
           onClick={() => inputRef.current.click()}
         />
+
+        {/* TODO:   make it not glitch when the uploading a wrong file and reach 100%*/}
         <p className="text-center">
           {fileUploadError ? (
             <span className="text-red-700">
@@ -85,23 +127,31 @@ function Profile() {
         <input
           type="text"
           placeholder="username"
+          defaultValue={currentUser.username}
           className="border p-3 rounded-lg"
           id="username"
+          onChange={handleChange}
         />
         <input
           type="email"
-          placeholder="password"
+          placeholder="email"
+          defaultValue={currentUser.email}
           className="border p-3 rounded-lg"
           id="email"
+          onChange={handleChange}
         />
         <input
-          type="text"
+          type="password"
           placeholder="password"
           className="border p-3 rounded-lg"
           id="password"
+          onChange={handleChange}
         />
-        <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-          Update
+        <button
+          disabled={loading}
+          className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+        >
+          {loading ? "Loading..." : "Update"}
         </button>
         <button className="bg-green-600 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
           create listing
@@ -111,6 +161,10 @@ function Profile() {
         <span className="text-red-400">Delete Account</span>
         <span className="text-red-400">Sign Out</span>
       </div>
+      <p className="text-red-700 mt-5">{error ? error : ""}</p>
+      <p className="text-green-700">
+        {updateSuccess ? "Profile Updated successfully" : ""}
+      </p>
       <div className="text-blue-600 text-center mt-8">Show listings</div>
     </div>
   );
