@@ -10,6 +10,9 @@ import PrivateRoute from "./components/PrivateRoute";
 import Try from "./pages/Try";
 import CreateListing from "./pages/CreateListing";
 
+// QUESTIONS: if no route matches what is in react router where which //
+// component will be shown?
+
 function App() {
   return (
     <BrowserRouter>

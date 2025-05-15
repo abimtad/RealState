@@ -34,7 +34,6 @@ function CreateListing() {
   console.log(formData);
 
   const handleImageUpload = () => {
-    console.log("handleimage upload");
     setUploadImageError(false);
     setImageUploading(true);
     const promises = [];
@@ -121,7 +120,7 @@ function CreateListing() {
     }
 
     if (formData.imageUrls.length < 1) {
-      return setError("image filed required !");
+      return setError("image field required !");
     }
     setLoading(true);
     setError(false);
@@ -136,6 +135,7 @@ function CreateListing() {
 
       if (data.success === false) {
         setError(data.message);
+        return;
       }
 
       setLoading(false);

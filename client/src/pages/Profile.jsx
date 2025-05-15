@@ -26,11 +26,12 @@ function Profile() {
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
+  const [showListingError, setShowListingError] = useState();
+  const [userListings, setUserListings] = useState([]);
+  const [expand, setExpand] = useState(false);
   const { currentUser, error, loading } = useSelector((state) => state.user);
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const dispatch = useDispatch();
-
-  console.log(formData);
 
   useEffect(() => {
     if (file) {
@@ -144,6 +145,26 @@ function Profile() {
       dispatch(signOutUserFailure(error.message));
     }
   };
+
+  const handleShowUserListing = async () => {
+    setShowListingError(false);
+    setExpand(!expand);
+
+    try {
+      const res = await fetch(`/api/listing/${currentUser._id}`);
+
+      const data = await res.json(res);
+
+      if (data.success === false) {
+        setShowListingError(true);
+        return;
+      }
+
+      setUserListings(data);
+    } catch (error) {
+      setShowListingError(true);
+    }
+  };
   return (
     <div className="max-w-lg  mx-auto mt-32">
       <h1 className="font-semibold text-3xl text-center mb-8">Profile</h1>
@@ -222,7 +243,54 @@ function Profile() {
       <p className="text-green-700">
         {updateSuccess ? "Profile Updated successfully" : ""}
       </p>
-      <div className="text-blue-600 text-center mt-8">Show listings</div>
+      <button
+        onClick={handleShowUserListing}
+        className="text-green-700 w-full text-center mt-8"
+      >
+        Show listings
+      </button>
+      <p>{showListingError && "Error showing listing !"}</p>
+      {console.log(userListings)}
+      {userListings.length == 0 ? (
+        <p className="text-center py-8 text-gray-500">
+          No listings found. Create your first listing!
+        </p>
+      ) : expand ? (
+        userListings.map((listing) => (
+          <div className="flex flex-col gap-4">
+            <h1 className="text-2xl font-semibold text-center mt-7">
+              Your Listings
+            </h1>
+            <div
+              key={listing._id}
+              className="flex gap-4 p-4 border rounded-lg items-center"
+            >
+              <Link to={`/listing/${listing._id}`}>
+                <img
+                  src={listing.imageUrls[0]}
+                  alt="listing cover"
+                  className="w-24 h-24 object-cover rounded-lg"
+                />
+              </Link>
+              <Link to={`/listing/${listing._id}`} className="flex-1">
+                <p className="font-semibold hover:underline text-lg">
+                  {listing.name}
+                </p>
+              </Link>
+              <div className="flex flex-col gap-2">
+                <button className="px-4 py-2 uppercase text-white bg-red-700 rounded hover:bg-red-800 transition">
+                  Delete
+                </button>
+                <button className="px-4 py-2 uppercase text-black bg-yellow-300 rounded hover:bg-yellow-400 transition">
+                  Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        ))
+      ) : (
+        ""
+      )}
     </div>
   );
 }
