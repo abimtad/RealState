@@ -31,7 +31,11 @@ function Profile() {
   const [expand, setExpand] = useState(false);
   const { currentUser, error, loading } = useSelector((state) => state.user);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const render = useRef(0);
   const dispatch = useDispatch();
+
+  render.current += 1;
+  console.log(render.current);
 
   useEffect(() => {
     if (file) {
@@ -148,12 +152,14 @@ function Profile() {
 
   const handleShowUserListing = async () => {
     setShowListingError(false);
+    // QUESTION: just before the listings are fetched from the db "No listing found create your first listing" is shown until the listings are fetched. why?
     setExpand(!expand);
 
     try {
+      // TODO:  add pagination
       const res = await fetch(`/api/listing/${currentUser._id}`);
 
-      const data = await res.json(res);
+      const data = await res.json();
 
       if (data.success === false) {
         setShowListingError(true);
@@ -163,6 +169,26 @@ function Profile() {
       setUserListings(data);
     } catch (error) {
       setShowListingError(true);
+    }
+  };
+
+  const handleListingDelete = async (id) => {
+    try {
+      console.log("id:", id);
+      const res = await fetch(`/api/listing/delete/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (data.success === false) {
+        console.log("hey !");
+        return;
+      }
+
+      setUserListings(userListings.filter((listing) => listing._id !== id));
+    } catch {
+      console.log("hey");
     }
   };
   return (
@@ -250,8 +276,7 @@ function Profile() {
         Show listings
       </button>
       <p>{showListingError && "Error showing listing !"}</p>
-      {console.log(userListings)}
-      {userListings.length == 0 ? (
+      {expand && userListings.length == 0 ? (
         <p className="text-center py-8 text-gray-500">
           No listings found. Create your first listing!
         </p>
@@ -278,7 +303,10 @@ function Profile() {
                 </p>
               </Link>
               <div className="flex flex-col gap-2">
-                <button className="px-4 py-2 uppercase text-white bg-red-700 rounded hover:bg-red-800 transition">
+                <button
+                  onClick={() => handleListingDelete(listing._id)}
+                  className="px-4 py-2 uppercase text-white bg-red-700 rounded hover:bg-red-800 transition"
+                >
                   Delete
                 </button>
                 <button className="px-4 py-2 uppercase text-black bg-yellow-300 rounded hover:bg-yellow-400 transition">
