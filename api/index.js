@@ -5,11 +5,17 @@ import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 import listingRouter from "./routes/listing.route.js";
 import cookieParser from "cookie-parser";
-import connectMongoDB from "./utils/connectDb.js";
 
 dotenv.config();
 
-connectMongoDB();
+mongoose
+  .connect(process.env.MONGO)
+  .then(() => {
+    console.log("Connected to MOngoDB");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 const app = express();
 

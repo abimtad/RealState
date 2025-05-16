@@ -162,6 +162,7 @@ function Profile() {
       const data = await res.json();
 
       if (data.success === false) {
+        console.log(data);
         setShowListingError(true);
         return;
       }
@@ -309,9 +310,11 @@ function Profile() {
                 >
                   Delete
                 </button>
-                <button className="px-4 py-2 uppercase text-black bg-yellow-300 rounded hover:bg-yellow-400 transition">
-                  Edit
-                </button>
+                <Link to={`/update-listing/${listing._id}`}>
+                  <button className="px-4 py-2 uppercase text-black bg-yellow-300 rounded hover:bg-yellow-400 transition">
+                    Edit
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
