@@ -14,6 +14,8 @@ import {
   FaParking,
   FaShare,
 } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import Contact from "../components/Contact";
 
 function Listing() {
   SwiperCore.use(Navigation);
@@ -22,6 +24,11 @@ function Listing() {
   const params = useParams();
   const [loading, setLoading] = useState();
   const [copied, setCopied] = useState();
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const [contact, setContact] = useState(null);
+
+  // QUESTIONS: If there is a string rendered conditionally I think it
+  // is treated as some kinda of component by the browser?
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -120,22 +127,31 @@ function Listing() {
               <span className="font-semibold">Description - </span>
               {listing.description}
             </p>
-            <div className="flex gap-5 items-center flex-wrap text-green-600 text-sm">
-              <div className="flex gap-1 items-center justify-center">
+            <ul className="flex gap-5 items-center flex-wrap text-green-600 text-sm">
+              <li className="flex gap-1 items-center justify-center">
                 <FaBed /> {listing.bedrooms > 1 ? "Beds" : "Bed"}
-              </div>
-              <div className="flex gap-1 items-center justify-center">
+              </li>
+              <li className="flex gap-1 items-center justify-center">
                 <FaBath /> {listing.bedrooms > 1 ? "Baths" : "Bath"}
-              </div>
-              <div className="flex gap-1 items-center justify-center">
+              </li>
+              <li className="flex gap-1 items-center justify-center">
                 <FaParking />
                 {listing.parking ? "Parking spot" : "No Parking"}
-              </div>
-              <div className="flex gap-1 items-center justify-center">
+              </li>
+              <li className="flex gap-1 items-center justify-center">
                 <FaChair />
                 {listing.furnished ? "Furnished" : "Not Furnished"}
-              </div>
-            </div>
+              </li>
+            </ul>
+            {currentUser && listing.userRef !== currentUser._id && !contact && (
+              <button
+                className="bg-slate-700 uppercase upper w-full text-white p-4 rounded-md hover:opacity-85"
+                onClick={() => setContact(true)}
+              >
+                contact landlord
+              </button>
+            )}
+            {contact && <Contact listing={listing} />}
           </div>
         </div>
       )}

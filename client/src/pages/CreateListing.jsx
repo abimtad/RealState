@@ -31,8 +31,6 @@ function CreateListing() {
   const currentUser = useSelector((state) => state.user.currentUser);
   const navigate = useNavigate();
 
-  console.log(formData);
-
   const handleImageUpload = () => {
     setUploadImageError(false);
     setImageUploading(true);

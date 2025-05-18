@@ -26,7 +26,7 @@ export const deleteUserListing = async (req, res, next) => {
     const listing = await Listing.findById(req.params.id);
     if (!listing) return next(errorHandler(400, "Listing isnt found !"));
     if (req.user.id !== listing.userRef)
-      return next(errorHandler(403, "You can only view your own listings"));
+      return next(errorHandler(403, "You can only delete your own listings"));
 
     await Listing.findByIdAndDelete(req.params.id);
     res.status(200).json("Listing deleted successfully !");
@@ -63,6 +63,52 @@ export const getUserListing = async (req, res, next) => {
     const listing = await Listing.findById(req.params.id);
 
     if (!listing) return next(errorHandler(404, "Listing not found !"));
+
+    res.json(listing);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getListings = async (req, res, next) => {
+  try {
+    console.log("preset inside getlisting");
+    const limit = parseInt(req.query.limit) || 9;
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const searchTerm = req.query.searchTerm || "";
+    const sort = req.query.sort || "createdAt";
+    const order = req.query.order || "desc";
+
+    let offer = req.query.offer;
+
+    if (offer === undefined || offer === "false")
+      offer = { $in: [true, false] };
+
+    let parking = req.query.parking;
+
+    if (parking === undefined || parking === "false")
+      parking = { $in: [true, false] };
+
+    let furnished = req.query.furnished;
+
+    if (furnished === undefined || furnished === "false")
+      furnished = { $in: [true, false] };
+
+    let type = req.query.type;
+
+    if (type === undefined || type === "false")
+      type = { $in: ["sell", "rent"] };
+
+    let listing = await Listing.find({
+      name: { $regex: searchTerm, $options: "i" },
+      offer,
+      furnished,
+      type,
+      parking,
+    })
+      .sort({ [sort]: order })
+      .skip(startIndex)
+      .limit(limit);
 
     res.json(listing);
   } catch (error) {
