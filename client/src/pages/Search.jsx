@@ -5,6 +5,7 @@ import ListingItem from "../components/ListingItem";
 
 function Search() {
   const navigate = useNavigate();
+  const [showMoreListing, setShowMoreListing] = useState(false);
   const [sideBarData, setSideBarData] = useState({
     searchTerm: "",
     type: "all",
@@ -17,10 +18,9 @@ function Search() {
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
 
-  console.log(listings);
+  console.log("listings:", listings);
 
   useEffect(() => {
-    console.log("effect running");
     const searchParams = new URLSearchParams(location.search);
     setSideBarData({
       ...sideBarData,
@@ -36,6 +36,7 @@ function Search() {
     const fetchListing = async () => {
       try {
         setLoading(true);
+        setShowMoreListing(false);
         const searchQuery = searchParams.toString();
         const res = await fetch(`api/listing?${searchQuery}`);
 
@@ -49,6 +50,11 @@ function Search() {
 
         setLoading(false);
         setListings(data);
+        if (data.length > 8) {
+          setShowMoreListing(true);
+        } else {
+          setShowMoreListing(false);
+        }
       } catch (error) {
         console.log(error.message);
         setLoading(false);
@@ -84,6 +90,29 @@ function Search() {
     e.preventDefault();
     const searchQuery = new URLSearchParams(sideBarData).toString();
     navigate(`/search?${searchQuery}`);
+  };
+
+  const onShowMoreListing = async () => {
+    const startIndex = listings.length;
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("startIndex", startIndex);
+    searchParams.toString();
+
+    try {
+      const res = await fetch(`/api/listing?${searchParams}`);
+      const data = await res.json();
+
+      if (data.success === false) {
+        console.log(data.message);
+      }
+
+      if (data.length < 9) {
+        setShowMoreListing(false);
+      }
+      setListings([...listings, ...data]);
+    } catch (error) {
+      console.log(error.message);
+    }
   };
   return (
     <main className="">
@@ -208,6 +237,14 @@ function Search() {
               listings.map((listing) => (
                 <ListingItem listing={listing} key={listing._id} />
               ))}
+            {showMoreListing && (
+              <button
+                onClick={() => onShowMoreListing()}
+                className="sm:col-span-2 md:col-span-1 lg:col-span-2 xl:col-span-3 w-full hover:underline text-green-700 "
+              >
+                Show More
+              </button>
+            )}
           </div>
         </div>
       </div>
