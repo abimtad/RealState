@@ -72,45 +72,50 @@ export const getUserListing = async (req, res, next) => {
 
 export const getListings = async (req, res, next) => {
   try {
-    console.log("preset inside getlisting");
     const limit = parseInt(req.query.limit) || 9;
     const startIndex = parseInt(req.query.startIndex) || 0;
-    const searchTerm = req.query.searchTerm || "";
-    const sort = req.query.sort || "createdAt";
-    const order = req.query.order || "desc";
-
     let offer = req.query.offer;
 
-    if (offer === undefined || offer === "false")
-      offer = { $in: [true, false] };
-
-    let parking = req.query.parking;
-
-    if (parking === undefined || parking === "false")
-      parking = { $in: [true, false] };
+    if (offer === undefined || offer === "false") {
+      offer = { $in: [false, true] };
+    }
 
     let furnished = req.query.furnished;
 
-    if (furnished === undefined || furnished === "false")
-      furnished = { $in: [true, false] };
+    if (furnished === undefined || furnished === "false") {
+      furnished = { $in: [false, true] };
+    }
+
+    let parking = req.query.parking;
+
+    if (parking === undefined || parking === "false") {
+      parking = { $in: [false, true] };
+    }
 
     let type = req.query.type;
 
-    if (type === undefined || type === "false")
-      type = { $in: ["sell", "rent"] };
+    if (type === undefined || type === "all") {
+      type = { $in: ["sale", "rent"] };
+    }
 
-    let listing = await Listing.find({
+    const searchTerm = req.query.searchTerm || "";
+
+    const sort = req.query.sort || "createdAt";
+
+    const order = req.query.order || "desc";
+
+    const listings = await Listing.find({
       name: { $regex: searchTerm, $options: "i" },
       offer,
       furnished,
-      type,
       parking,
+      type,
     })
       .sort({ [sort]: order })
-      .skip(startIndex)
-      .limit(limit);
-
-    res.json(listing);
+      .limit(limit)
+      .skip(startIndex);
+    console.log(listings);
+    return res.status(200).json(listings);
   } catch (error) {
     next(error);
   }

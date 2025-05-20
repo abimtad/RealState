@@ -114,12 +114,12 @@ function Listing() {
               {listing.address}
             </p>
             <div className="flex gap-4">
-              <p className="bg-red-900 w-full w-[180px] text-white text-center p-1 rounded-md">
+              <p className="bg-red-900 w-[180px] text-white text-center p-1 rounded-md">
                 {listing.type === "rent" ? "For Rent" : "For Sale"}
               </p>
               {listing.offer && (
-                <p className="text-white w-full w-[180px] bg-green-700 max-w-[200px] text-center p-1 rounded-md">
-                  ${listing.regularPrice - listing.discountedPrice} discount
+                <p className="text-white w-full bg-green-700 max-w-[200px] text-center p-1 rounded-md">
+                  ${listing.regularPrice - listing.discountedPrice} OFF
                 </p>
               )}
             </div>
