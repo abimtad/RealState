@@ -113,7 +113,7 @@ function CreateListing() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.offer && formData.discountedPrice >= formData.regularPrice) {
+    if (formData.offer && +formData.discountedPrice < +formData.regularPrice) {
       return setError("Discounted price must be less than regular price !");
     }
 
@@ -265,7 +265,7 @@ function CreateListing() {
                 id="regularPrice"
                 className="text-2xl border border-gray-300"
                 min={1}
-                max={60}
+                max={10000000}
                 required
                 onChange={handleChange}
               />

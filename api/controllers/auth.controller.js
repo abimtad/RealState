@@ -41,7 +41,10 @@ export const signIn = async (req, res, next) => {
     );
     const { password: _, ...withoutPassword } = validUser.toObject();
     return res
-      .cookie("access_token", token, { httpOnly: true })
+      .cookie("access_token", token, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
       .json(withoutPassword);
   } catch (error) {
     next(error);
@@ -61,7 +64,10 @@ export const google = async (req, res, next) => {
       );
       const { password: pass, ...withOutPassword } = user._doc;
       return res
-        .cookie("access_token", token, { httpOnly: true })
+        .cookie("access_token", token, {
+          httpOnly: true,
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
         .json(withOutPassword);
     } else {
       const generatedPassword =
@@ -90,7 +96,10 @@ export const google = async (req, res, next) => {
 
       const { password: pass, ...withOutPassword } = newUser._doc;
       return res
-        .cookie("access_token", token, { httpOnly: true })
+        .cookie("access_token", token, {
+          httpOnly: true,
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
         .status(201)
         .json(withOutPassword);
     }

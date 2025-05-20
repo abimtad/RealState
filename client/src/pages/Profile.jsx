@@ -193,7 +193,7 @@ function Profile() {
     }
   };
   return (
-    <div className="max-w-lg  mx-auto mt-32">
+    <div className="max-w-lg  mx-auto mt-32 p-4">
       <h1 className="font-semibold text-3xl text-center mb-8">Profile</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <input
