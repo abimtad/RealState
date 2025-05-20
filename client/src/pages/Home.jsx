@@ -63,13 +63,11 @@ function Home() {
     <div className="">
       <div className="flex flex-col gap-4 p-4">
         <h1 className="text-slate-700 font-bold text-4xl md:text-6xl lg:text-7xl">
-          Find your next <span className="text-slate-500">perfect</span>
-          <br />
-          place with ease
+          Discover Where Comfort Meets{" "}
+          <span className="text-slate-500">convenience</span>
         </h1>
         <div className="text-gray-400 text-xs sm:text-sm">
-          Sahand Estate is the best place to find your next perfect place to
-          live.
+          Abel Estate is the best place to find your next perfect place to live.
           <br />
           We have a wide range of properties for you to choose from.
         </div>
@@ -89,6 +87,7 @@ function Home() {
                 style={{
                   background: `url(${listing.imageUrls[0]}) center no-repeat`,
                   backgroundSize: "cover",
+                  backgroundPosition: "bottom",
                 }}
                 className="h-[500px]"
                 key={listing._id}
